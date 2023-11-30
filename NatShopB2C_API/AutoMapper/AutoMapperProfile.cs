@@ -47,7 +47,17 @@ namespace NatShopB2C_API.AutoMapper
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.AddressId))
                 ;
             CreateMap<UserDetailDTO, UserDetail>().ReverseMap()
-                .ForMember(x => x.UserId, o => o.MapFrom(x => x.UserId));
+                .ForMember(x => x.UserId, o => o.MapFrom(x => x.UserId))
+                
+                
+                ;
+            CreateMap<UserDetailsDTO, UserDetail>().ReverseMap()
+                .ForMember(x => x.UserId, o => o.MapFrom(x => x.UserId))
+                .ForMember(x => x.ProofTypeName, o => o.MapFrom(x =>x.ProofType.ProofTypeName))
+                .ForMember(x => x.UserTypeName, o => o.MapFrom(x => x.UserType.UserTypeName))
+
+
+                ;
 
             CreateMap<UserDTO, User>().ReverseMap()
                 .ForMember(x => x.UserId, o => o.MapFrom(x => x.UserId));

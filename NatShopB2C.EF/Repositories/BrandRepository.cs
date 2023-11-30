@@ -12,7 +12,7 @@ namespace NatShopB2C.EF.Repositories
 {
     public class BrandRepository : IBrandRepository
     {
-        public readonly ApplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
         public BrandRepository(ApplicationDbContext db)
         {
             _db = db;
