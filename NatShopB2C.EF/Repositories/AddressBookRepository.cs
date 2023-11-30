@@ -12,7 +12,7 @@ namespace NatShopB2C.EF.Repositories
 {
     public class AddressBookRepository : IAddressBookRepository
     {
-        public readonly ApplicationDbContext _db;
+        private readonly ApplicationDbContext _db;
         public AddressBookRepository(ApplicationDbContext db)
         {
             _db = db;

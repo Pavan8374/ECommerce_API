@@ -100,12 +100,12 @@ namespace NatShopB2C_API.Controllers.Account
         {
             try
             {
-                var products = await _accountService.GetUserDetails();
-                if (products == null)
+                var userDetails = await _accountService.GetUserDetails();
+                if (userDetails == null)
                 {
                     return NotFound();
                 }
-                response.Result = _mapper.Map<List<UserDetailDTO>>(products);
+                response.Result = _mapper.Map<List<UserDetailsDTO>>(userDetails);
                 response.StatusCode = System.Net.HttpStatusCode.OK;
                 return Ok(response);
             }
@@ -130,12 +130,12 @@ namespace NatShopB2C_API.Controllers.Account
                 {
                     return BadRequest();
                 }
-                var product = await _accountService.GetUserDetailsById(Id);
-                if (product == null)
+                var userDetail = await _accountService.GetUserDetailsById(Id);
+                if (userDetail == null)
                 {
                     return NotFound();
                 }
-                response.Result = _mapper.Map<List<UserDetailDTO>>(product);
+                response.Result = _mapper.Map<UserDetailDTO>(userDetail);
                 response.StatusCode = System.Net.HttpStatusCode.OK;
                 return Ok(response);
             }

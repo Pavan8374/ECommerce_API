@@ -59,12 +59,15 @@ namespace NatShopB2C.EF.Repositories
         }
         public async Task<List<UserDetail>> GetUserDetails() 
         {
-            return await _db.UserDetails.AsNoTracking().ToListAsync(); ;
-
+            var userSetails = await _db.UserDetails.AsNoTracking().
+                Include(x =>x.ProofType).
+                Include(x => x.UserType).
+                ToListAsync(); 
+            return userSetails;
         }
         public async Task<UserDetail> GetUserDetailsById(Guid? Id) 
         {
-            return await _db.UserDetails.AsNoTracking().Where(x => x.UserId == Id).FirstOrDefaultAsync();
+            return await _db.UserDetails.AsNoTracking().Where(x => x.UserId == Id).Include(x =>x.UserType).Include(x =>x.ProofType).FirstOrDefaultAsync();
         }
 
     }

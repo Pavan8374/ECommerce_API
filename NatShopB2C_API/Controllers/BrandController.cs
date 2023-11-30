@@ -135,7 +135,7 @@ namespace NatShopB2C_API.Controllers
                 {
                     return NotFound();
                 }
-                response.Result = _mapper.Map<List<BrandDTO>>(brand);
+                response.Result = _mapper.Map<BrandDTO>(brand);
                 response.StatusCode = System.Net.HttpStatusCode.OK;
                 return Ok(response);
             }
