@@ -1,52 +1,53 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using NatShopB2C_API.AccountModels;
 using NatShopB2C.Domain.IServices;
 using NatShopB2C.Domain.Models;
+using NatShopB2C.Domain.Services;
+using NatShopB2C_API.AccountModels;
 using NatShopB2C_API.DTO;
 
 namespace NatShopB2C_API.Controllers
 {
-    [Authorize]
     [ApiController]
-    [Route("/api/Product")]
-    public class ProductController : ControllerBase
-    {       
-        private readonly IProductService _productService;
+    [Route("/api/Cart"), Authorize]
+    public class CartController : ControllerBase
+    {
+        private readonly ICartService _cartService;
         private readonly IMapper _mapper;
         protected Response response;
-        public ProductController(IProductService productService, IMapper mapper)
+        public CartController(ICartService cartService, IMapper mapper)
         {
-            _productService= productService;
+            _cartService = cartService;
             _mapper = mapper;
             this.response = new();
         }
 
         [HttpPost]
-        [Route("UpsertProduct")]
+        [Route("ManageCart")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Response>> UpsertProduct(ProductDTO DTO)
+        public async Task<ActionResult<Response>> ManageCart(CartDTO DTO)
         {
+
             try
             {
-                if(DTO == null)
+                if (DTO == null)
                 {
                     return NotFound();
                 }
-                var obj = _mapper.Map<Product>(DTO);
+                var obj = _mapper.Map<Cart>(DTO);
 
-                if (DTO.ProductID == null || DTO.ProductID == "")
+                if (DTO.Id == 0)
                 {
-                    response.Result = await _productService.AddProduct(obj);
+                    response.Result = await _cartService.AddItemToCart(obj);
                     response.StatusCode = System.Net.HttpStatusCode.Created;
                     return Ok(response);
                 }
                 else
                 {
-                    response.Result = await _productService.UpdateProduct(obj);
+                    response.Result = await _cartService.UpdateCart(obj);
                     response.StatusCode = System.Net.HttpStatusCode.NoContent;
                     return Ok(response);
                 }
@@ -57,28 +58,27 @@ namespace NatShopB2C_API.Controllers
                 response.ErrorMessages = new List<string>() { ex.ToString() };
             }
             return response;
-
         }
         [HttpDelete]
-        [Route("DeleteProduct")]
+        [Route("RemoveItemsFromCart")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Response>> DeleteProduct(Guid id)
+        public async Task<ActionResult<Response>> RemoveItemsFromCart(int id)
         {
             try
             {
 
-                var product = await _productService.GetProduct(id);
-                if (product == null)
+                var cart = await _cartService.GetCart(id);
+                if (cart == null)
                 {
                     return NotFound();
                 }
-                await _productService.DeleteProduct(product);
+                await _cartService.RemoveItemsFromCart(cart);
                 response.StatusCode = System.Net.HttpStatusCode.NoContent;
                 response.IsSuccess = true;
                 return Ok(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.ErrorMessages = new List<string>() { ex.ToString() };
@@ -87,23 +87,23 @@ namespace NatShopB2C_API.Controllers
 
         }
         [HttpGet]
-        [Route("GetProducts")]
+        [Route("GetItems")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Response>> GetProducts()
+        public async Task<ActionResult<Response>> GetItems()
         {
             try
             {
-                var products = await _productService.GetProducts();
-                if (products == null)
+                var cart = await _cartService.GetItems();
+                if (cart == null)
                 {
                     return NotFound();
                 }
-                response.Result = _mapper.Map<List<ProductDTO>>(products);
-                response.StatusCode = System.Net.HttpStatusCode.OK;              
+                response.Result = _mapper.Map<List<CartDTO>>(cart);
+                response.StatusCode = System.Net.HttpStatusCode.OK;
                 return Ok(response);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.IsSuccess = false;
                 response.ErrorMessages = new List<string>() { ex.ToString() };
@@ -112,11 +112,11 @@ namespace NatShopB2C_API.Controllers
 
         }
         [HttpGet]
-        [Route("GetProduct")]
+        [Route("GetCart")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Response>> GetProduct(Guid? id)
+        public async Task<ActionResult<Response>> GetCart(int id)
         {
             try
             {
@@ -124,50 +124,14 @@ namespace NatShopB2C_API.Controllers
                 {
                     return BadRequest();
                 }
-                var product = await _productService.GetProduct(id);
+                var product = await _cartService.GetCart(id);
                 if (product == null)
                 {
                     return NotFound();
                 }
-                response.Result = _mapper.Map<List<ProductDTO>>(product);
+                response.Result = _mapper.Map<List<CartDTO>>(product);
                 response.StatusCode = System.Net.HttpStatusCode.OK;
                 return Ok(response);
-            }
-            catch(Exception ex)
-            {
-                response.IsSuccess = false;
-                response.ErrorMessages = new List<string>() { ex.ToString() };
-            }
-            return response;
-
-        }
-        [HttpPost]
-        [Route("UpsertProductVarient")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Response>> UpsertProductVarient(ProductVarientDTO DTO)
-        {
-            try
-            {
-                if (DTO == null)
-                {
-                    return NotFound();
-                }
-                var obj = _mapper.Map<ProductVariation>(DTO);
-
-                if (DTO.Id == null)
-                {
-                    response.Result = await _productService.AddProductVarient(obj);
-                    response.StatusCode = System.Net.HttpStatusCode.Created;
-                    return Ok(response);
-                }
-                else
-                {
-                    //response.Result = await _productService.UpdateProduct(obj);
-                    response.StatusCode = System.Net.HttpStatusCode.NoContent;
-                    return Ok(response);
-                }
             }
             catch (Exception ex)
             {
