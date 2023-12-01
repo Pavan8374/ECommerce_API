@@ -28,6 +28,8 @@ builder.Services.AddTransient<IBrandRepository, BrandRepository>();
 builder.Services.AddTransient<IBrandService, BrandService>();
 builder.Services.AddTransient<IAddressBookRepository, AddressBookRepository>();
 builder.Services.AddTransient<IAddressBookService, AddressBookService>();
+builder.Services.AddTransient<ICartRepository, CartRepository>();
+builder.Services.AddTransient<ICartService, CartService>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options 

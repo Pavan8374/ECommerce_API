@@ -60,8 +60,14 @@ namespace NatShopB2C_API.AutoMapper
                 ;
 
             CreateMap<UserDTO, User>().ReverseMap()
-                .ForMember(x => x.UserId, o => o.MapFrom(x => x.UserId));
-
+                .ForMember(x => x.UserId, o => o.MapFrom(x => x.UserId))
+                
+                ;
+            CreateMap<CartDTO, Cart>().ReverseMap()
+                .ForMember(X => X.Id, o => o.MapFrom(x => x.Id))
+                ;
+            CreateMap<ProductVarientDTO, ProductVariation>().ReverseMap()
+                .ForMember(x => x.Id, o => o.MapFrom(x => x.Id));
         }
 
     }

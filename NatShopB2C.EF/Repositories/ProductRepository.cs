@@ -47,5 +47,12 @@ namespace NatShopB2C.EF.Repositories
             var product = await _db.Products.AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
             return product;
         }
+        public async Task<ProductVariation>AddProductVarient(ProductVariation varient)
+        {
+            varient.Id= Guid.NewGuid();
+            await _db.ProductVariations.AddAsync(varient);
+            await _db.SaveChangesAsync();
+            return varient;
+        }
     }
 }

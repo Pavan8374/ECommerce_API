@@ -14,5 +14,6 @@ namespace NatShopB2C.Domain.IRepositories
         Task<Product> DeleteProduct(Product product);
         Task<List<Product>> GetProducts();
         Task<Product> GetProduct(Guid? id);
+        Task<ProductVariation> AddProductVarient(ProductVariation varient);
     }
 }
