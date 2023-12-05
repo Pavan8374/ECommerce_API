@@ -11,7 +11,7 @@ namespace NatShopB2C_API.AutoMapper
         public AutoMapperProfile()
         {
             CreateNatShopB2CMap();
-        }
+        }   
         private void CreateNatShopB2CMap()
         {
             CreateMap<BrandDTO, Brand>().ReverseMap()
@@ -63,7 +63,7 @@ namespace NatShopB2C_API.AutoMapper
                 
                 ;
             CreateMap<CartDTO, Cart>().ReverseMap()
-                .ForMember(X => X.Id, o => o.MapFrom(x => x.Id))
+                .ForMember(X => X.Id, o => o.MapFrom(y => y.Id))
                 ;
             CreateMap<ProductVarientDTO, ProductVariation>().ReverseMap()
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.Id));

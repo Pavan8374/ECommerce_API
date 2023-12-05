@@ -67,6 +67,10 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.AutomaticAuthentication = false;
+});
 builder.Services.AddSwaggerGen(
 
     c =>
