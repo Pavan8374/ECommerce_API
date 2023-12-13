@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ValueType = NatShopB2C.Domain.Models.ValueType;
+using NatShopB2C.Domain.StoredProcedureModels;
 
 namespace NatShopB2C.EF.Data
 {
@@ -157,6 +158,11 @@ namespace NatShopB2C.EF.Data
         public virtual DbSet<ValueType> ValueTypes { get; set; } = null!;
         public virtual DbSet<Variation> Variations { get; set; } = null!;
         public virtual DbSet<Warehouse> Warehouses { get; set; } = null!;
+
+
+
+        public DbSet<ProductByAllFilterOptions> ProductByAllFilterOptions { get; set; }
+        public DbSet<usp_select_SubCategoriesByCategoryID> usp_select_SubCategoriesByCategoryID { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -4584,6 +4590,11 @@ namespace NatShopB2C.EF.Data
 
                 entity.Property(e => e.WarehouseName).HasMaxLength(200);
             });
+
+
+
+            modelBuilder.Entity<ProductByAllFilterOptions>().HasNoKey().ToView(null);
+            modelBuilder.Entity<usp_select_SubCategoriesByCategoryID>().HasNoKey().ToView(null);
 
             OnModelCreatingPartial(modelBuilder);
 

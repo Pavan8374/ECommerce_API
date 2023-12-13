@@ -30,9 +30,11 @@ builder.Services.AddTransient<IAddressBookRepository, AddressBookRepository>();
 builder.Services.AddTransient<IAddressBookService, AddressBookService>();
 builder.Services.AddTransient<ICartRepository, CartRepository>();
 builder.Services.AddTransient<ICartService, CartService>();
+builder.Services.AddTransient<IMenuRepository, MenuRepository>();
+builder.Services.AddTransient<IMenuService, MenuService>();
 
 
-builder.Services.AddDbContext<ApplicationDbContext>(options 
+builder.Services.AddDbContext<ApplicationDbContext>(options
     => options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
 // For Identity
@@ -101,17 +103,25 @@ builder.Services.AddSwaggerGen(
             }
         });
     });
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllCors", builder =>
+    {
+        builder.WithOrigins("http://localhost:44036", "http://192.168.1.231/swagger/index.html", "http://localhost:4200");
+        builder.AllowAnyHeader();
+        builder.AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
+//if (app.Environment.IsDevelopment())
+//{
+app.UseSwagger();
+app.UseSwaggerUI();
+//}
+app.UseCors("AllCors");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

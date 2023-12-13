@@ -1,6 +1,8 @@
-﻿using NatShopB2C.Domain.IRepositories;
+﻿using NatShopB2C.Domain.AccountModels;
+using NatShopB2C.Domain.IRepositories;
 using NatShopB2C.Domain.IServices;
 using NatShopB2C.Domain.Models;
+using NatShopB2C.Domain.StoredProcedureModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,11 @@ namespace NatShopB2C.Domain.Services
             var products = await _productrepository.GetProducts();
             return products;
         }
+        //public async Task<List<ProductImagePathDTO>> GetProducts()
+        //{
+        //    var products = await _productrepository.GetProducts();
+        //    return products;
+        //}
         public async Task<Product> GetProduct(Guid? id)
         {
             var product = await _productrepository.GetProduct(id);
@@ -46,6 +53,18 @@ namespace NatShopB2C.Domain.Services
         {
             await _productrepository.AddProductVarient(varient);
             return varient;
+        }
+        //public async Task<List<Product>> LoadProductData(int? Start, int? End, string ProductID, string BrandID, string CategoryID, string UsageTypeID, string Keyword, string SpecificationValueList, string DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string OrderColumn, bool IsAscending)
+        //{
+        //    return await _productrepository.LoadProductData(Start, End, ProductID, BrandID, CategoryID, UsageTypeID, Keyword, SpecificationValueList, DiscountIDList,  MinPrice, MaxPrice, OrderColumn, IsAscending);
+        //}
+        public async Task<List<ProductByAllFilterOptions>> GetProductsByFilterOptions(int? Start, int? End, string? ProductID, string? BrandID, string? CategoryID, string? UsageTypeID, string? Keyword, string? SpecificationValueList, string? DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string? OrderColumn, bool? IsAscending)
+        {
+            return await _productrepository.GetProductsByFilterOptions(Start, End, ProductID, BrandID, CategoryID, UsageTypeID, Keyword, SpecificationValueList, DiscountIDList, MinPrice, MaxPrice, OrderColumn, IsAscending);
+        }
+        public async Task<List<ProductByAllFilterOptionsDTO>> GetProductByFilterOption(string ID)
+        {
+            return await _productrepository.GetProductByFilterOption(ID);
         }
     }
 }
