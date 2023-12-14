@@ -57,21 +57,33 @@ namespace NatShopB2C.EF.Repositories
                         .ThenInclude(o => o.Image)
                 .AsNoTracking()
                 .ToListAsync();
+            return products;
+        }
+        public async Task<List<select_ProductsDetailsByFilter>> GetProductsByFilter(int? startIndex, int? endIndex, string? ProductID, bool? isActive, bool? isDelete)
+        {
+            //var objParam = new SqlParameter("@TotalRecords", SqlDbType.Int)
+            //{
+            //    Direction = ParameterDirection.Output
+            //};
 
-        //    var productsWithImages = _db.Products
-        //.Include(p => p.ProductVariations)
-        //    .ThenInclude(pv => pv.ProductVariationImages)
-        //        .ThenInclude(img => img.Image)
-        //.Select(product => new ProductImagePathDTO
-        //{
-        //    ProductID = product.Id,
-        //    ProductName = product.ProductName,
-        //    ImagePath = product.ProductVariations
-        //        .SelectMany(variation => variation.ProductVariationImages
-        //            .Select(image => image.Image.ImagePath))
-        //        .FirstOrDefault()
-        //})
-        //.ToList();
+            string sql = "EXEC usp_select_ProductsDetailsByFilter  @startIndex, @endIndex, @ProductID, @isActive,  @isDelete";
+
+            SqlParameter[] parms = new SqlParameter[]
+            { 
+                // Create parameters    
+                new SqlParameter("@startIndex", startIndex),
+                new SqlParameter("@endIndex", endIndex),
+                new SqlParameter("@ProductID", string.IsNullOrEmpty(ProductID) ? DBNull.Value : (object)ProductID),
+                new SqlParameter("@isActive", isActive),
+                new SqlParameter("@isDelete", isDelete)
+            };
+
+            var products = await _db.select_ProductsDetailsByFilter
+                .FromSqlRaw(sql, parms)
+                .ToListAsync();
+
+            // Access the output parameter value
+            //var totalRecords = (int)objParam.Value;
 
             return products;
         }

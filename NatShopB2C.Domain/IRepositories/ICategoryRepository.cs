@@ -1,4 +1,6 @@
 ﻿using NatShopB2C.Domain.Models;
+using NatShopB2C.Domain.StoredProcedureModels;
+using NatShopB2C.EF.Common.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +11,7 @@ namespace NatShopB2C.Domain.IRepositories
 {
     public interface ICategoryRepository
     {
-        Task<List<Category>> GetCategory();
+        Task<List<select_CategoryDetailsByFilter>> GetCategories(int? StartIndex, int? EndIndex,bool? IsActive,bool? IsArchieve);
+        Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy();
     }
 }

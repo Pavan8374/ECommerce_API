@@ -73,6 +73,7 @@ namespace NatShopB2C_API.AutoMapper
 
             CreateMap<MenuDTO, Menu>().ReverseMap()
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.Id));
+                //.ForMember(x =>x.CategoryId, o => o.MapFrom(x => x.ParentMenuId));
         }
 
     }
