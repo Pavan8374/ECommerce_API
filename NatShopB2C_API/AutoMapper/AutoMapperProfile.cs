@@ -11,7 +11,7 @@ namespace NatShopB2C_API.AutoMapper
         public AutoMapperProfile()
         {
             CreateNatShopB2CMap();
-        }
+        }   
         private void CreateNatShopB2CMap()
         {
             CreateMap<BrandDTO, Brand>().ReverseMap()
@@ -21,9 +21,12 @@ namespace NatShopB2C_API.AutoMapper
             CreateMap<ProductDTO, Product>().ReverseMap()
                 .ForMember(x => x.ProductID, o => o.MapFrom(x => x.Id))
                 .ForMember(x => x.ProductVariationID, o => o.MapFrom(x => x.ProductVariations.Select(y => y.Id).FirstOrDefault()))
-                .ForMember(x => x.ProductVariationImageID, o => o.MapFrom(x => x.ProductVariations != null ? x.ProductVariations.Select(y => y.ProductVariationImages.Select(y => y.Id).FirstOrDefault()) : null))
-                .ForMember(x => x.ImageID, o => o.MapFrom(x => x.ProductVariations != null ? x.ProductVariations.Select(y => y.ProductVariationImages.Select(y => y.ImageId).FirstOrDefault()) : null))
-
+                .ForMember(x => x.ProductVariationImageID, o => o.MapFrom(x =>  x.ProductVariations.SelectMany(y => y.ProductVariationImages.Select(y => y.Id)).FirstOrDefault()))
+                .ForMember(x => x.ImageID, o => o.MapFrom(x => x.ProductVariations.SelectMany(y => y.ProductVariationImages.Select(y => y.ImageId)).FirstOrDefault()))
+                .ForMember(x =>x.ImagePath, o => o.MapFrom(x => x.ProductVariations != null ? x.ProductVariations.SelectMany(y => y.ProductVariationImages.Select(y => y.Image.ImagePath)).FirstOrDefault() : null))
+                .ForMember(x =>x.CategoryName, o => o.MapFrom(x => x.Category.CategoryName))
+                .ForMember(x =>x.BrandName, o => o.MapFrom(x => x.Brand.BrandName))
+                .ForMember(x =>x.StockTypeName, o => o.MapFrom(x => x.StockType.StockTypeName))
                 ;
 
 
@@ -63,9 +66,12 @@ namespace NatShopB2C_API.AutoMapper
                 
                 ;
             CreateMap<CartDTO, Cart>().ReverseMap()
-                .ForMember(X => X.Id, o => o.MapFrom(x => x.Id))
+                .ForMember(X => X.Id, o => o.MapFrom(y => y.Id))
                 ;
             CreateMap<ProductVarientDTO, ProductVariation>().ReverseMap()
+                .ForMember(x => x.Id, o => o.MapFrom(x => x.Id));
+
+            CreateMap<MenuDTO, Menu>().ReverseMap()
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.Id));
         }
 

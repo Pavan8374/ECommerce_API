@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -17,7 +18,7 @@ using System.Text;
 namespace NatShopB2C_API.Controllers
 {
     [ApiController]
-    [Route("/api/Account")]
+    [Route("/api/Account")]    
     //[Authorize]
     public class AuthorizationController : ControllerBase
     {
@@ -73,6 +74,8 @@ namespace NatShopB2C_API.Controllers
             }
             return Unauthorized();
         }
+
+        //[Authorize]
         [HttpPost]
         [Route("LogOut")]
         public IActionResult LogOut()
@@ -80,6 +83,8 @@ namespace NatShopB2C_API.Controllers
             var response = Response.Headers.Remove("Authorization");
             return Ok(response);
         }
+
+        //[Authorize]
         [HttpPost]
         [Route("ResetPassword")]
         public async Task<IActionResult> ChangePassword(ChangePasswordBindingModel model)
@@ -99,6 +104,7 @@ namespace NatShopB2C_API.Controllers
             return Ok();
         }
 
+        //[Authorize]
         [HttpPost]
         [Route("RegisterUser")]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
@@ -134,6 +140,7 @@ namespace NatShopB2C_API.Controllers
 
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
+        //[Authorize]
         [HttpPost]
         [Route("RegisterAdmin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
@@ -178,7 +185,7 @@ namespace NatShopB2C_API.Controllers
 
             return token;
         }
-
+        //[Authorize]
         [HttpPost]
         [Route("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword([Required] string Username)

@@ -1,4 +1,6 @@
-﻿using NatShopB2C.Domain.Models;
+﻿using NatShopB2C.Domain.AccountModels;
+using NatShopB2C.Domain.Models;
+using NatShopB2C.Domain.StoredProcedureModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,12 @@ namespace NatShopB2C.Domain.IRepositories
         Task<Product> UpdateProduct(Product product);
         Task<Product> DeleteProduct(Product product);
         Task<List<Product>> GetProducts();
+        //Task<List<ProductImagePathDTO>> GetProducts();
         Task<Product> GetProduct(Guid? id);
         Task<ProductVariation> AddProductVarient(ProductVariation varient);
+        //Task<Product> GetProductByFilterOptions(Guid Id);
+        //Task<List<Product>> LoadProductData(int? Start, int? End, string ProductID, string BrandID, string CategoryID, string UsageTypeID, string Keyword, string SpecificationValueList, string DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string OrderColumn, bool IsAscending);
+        Task<List<ProductByAllFilterOptions>> GetProductsByFilterOptions(int? Start, int? End, string? ProductID, string? BrandID, string? CategoryID, string? UsageTypeID, string? Keyword, string? SpecificationValueList, string? DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string? OrderColumn, bool? IsAscending);
+        Task<List<ProductByAllFilterOptionsDTO>> GetProductByFilterOption(string ID);
     }
 }

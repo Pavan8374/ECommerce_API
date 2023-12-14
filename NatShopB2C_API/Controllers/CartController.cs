@@ -120,16 +120,16 @@ namespace NatShopB2C_API.Controllers
         {
             try
             {
-                if (id == null)
+                if (id == 0)
                 {
                     return BadRequest();
                 }
-                var product = await _cartService.GetCart(id);
-                if (product == null)
+                var cart = await _cartService.GetCart(id);
+                if (cart == null)
                 {
                     return NotFound();
                 }
-                response.Result = _mapper.Map<List<CartDTO>>(product);
+                response.Result = _mapper.Map<CartDTO>(cart);
                 response.StatusCode = System.Net.HttpStatusCode.OK;
                 return Ok(response);
             }
