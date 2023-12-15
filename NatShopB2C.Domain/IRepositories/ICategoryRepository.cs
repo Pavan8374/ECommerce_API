@@ -12,6 +12,6 @@ namespace NatShopB2C.Domain.IRepositories
     public interface ICategoryRepository
     {
         Task<List<select_CategoryDetailsByFilter>> GetCategories(int? StartIndex, int? EndIndex,bool? IsActive,bool? IsArchieve);
-        Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy();
+        Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve, string? SearchString);
     }
 }
