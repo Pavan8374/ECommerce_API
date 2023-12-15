@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using NatShopB2C.Domain.IRepositories;
 using NatShopB2C.Domain.IServices;
 using NatShopB2C.Domain.Services;
+using NatShopB2C.EF.AutoMapper;
 using NatShopB2C.EF.Data;
 using NatShopB2C.EF.Repositories;
 using NatShopB2C_API.AutoMapper;
@@ -32,6 +33,8 @@ builder.Services.AddTransient<ICartRepository, CartRepository>();
 builder.Services.AddTransient<ICartService, CartService>();
 builder.Services.AddTransient<IMenuRepository, MenuRepository>();
 builder.Services.AddTransient<IMenuService, MenuService>();
+builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options
@@ -65,7 +68,8 @@ builder.Services.AddAuthentication(options =>
 });
 
 //builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+builder.Services.AddAutoMapper(typeof(NatShopMapperProfile));
+builder.Services.AddAutoMapper(typeof(EFMapperProfile));
 builder.Services.AddControllers();
 builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 builder.Services.AddEndpointsApiExplorer();

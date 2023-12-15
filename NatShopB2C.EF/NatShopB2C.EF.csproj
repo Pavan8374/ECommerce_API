@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.25" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.25" />
@@ -19,6 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NatShopB2C.Domain\NatShopB2C.Domain.csproj" />    
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Common\DTO\" />
   </ItemGroup>
 
 </Project>

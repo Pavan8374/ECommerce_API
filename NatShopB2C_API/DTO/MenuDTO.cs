@@ -3,6 +3,7 @@
     public class MenuDTO
     {
         public int Id { get; set; }
+        public int CategoryId { get; set; }
         public string? MenuName { get; set; }
         public string? Caption { get; set; }
         //public string Key { get; set; }

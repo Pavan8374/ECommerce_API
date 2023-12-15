@@ -113,6 +113,34 @@ namespace NatShopB2C_API.Controllers
             return response;
 
         }
+
+        [HttpGet]
+        [Route("GetProductsByFilter")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Response>> GetProductsByFilter(int? startIndex, int? endIndex, string? ProductID, bool? isActive, bool? isDelete)
+        {
+            try
+            {
+                var products = await _productService.GetProductsByFilter(startIndex, endIndex, ProductID, isActive, isDelete);
+                if (products == null)
+                {
+                    return NotFound();
+                }
+                var list = products;
+                response.Result = list;
+                response.StatusCode = System.Net.HttpStatusCode.OK;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return response;
+
+        }
+
         [HttpGet]
         [Route("GetProduct")]
         [ProducesResponseType(StatusCodes.Status200OK)]

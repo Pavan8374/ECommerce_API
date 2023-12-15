@@ -39,6 +39,11 @@ namespace NatShopB2C.Domain.Services
             var products = await _productrepository.GetProducts();
             return products;
         }
+        public async Task<List<select_ProductsDetailsByFilter>> GetProductsByFilter(int? startIndex, int? endIndex, string? ProductID, bool? isActive, bool? isDelete)
+        {
+            var products = await _productrepository.GetProductsByFilter(startIndex, endIndex, ProductID, isActive, isDelete);
+            return products;
+        }
         //public async Task<List<ProductImagePathDTO>> GetProducts()
         //{
         //    var products = await _productrepository.GetProducts();
