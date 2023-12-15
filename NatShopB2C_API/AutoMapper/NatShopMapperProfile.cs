@@ -1,14 +1,16 @@
 ﻿using AutoMapper;
 using NatShopB2C.Domain.Models;
+using NatShopB2C.Domain.StoredProcedureModels;
+using NatShopB2C.EF.Common.DTO;
 using NatShopB2C_API.DTO;
 using System.Text;
 using Profile = AutoMapper.Profile;
 
 namespace NatShopB2C_API.AutoMapper
 {
-    public class AutoMapperProfile : Profile
+    public class NatShopMapperProfile : Profile
     {
-        public AutoMapperProfile()
+        public NatShopMapperProfile()
         {
             CreateNatShopB2CMap();
         }   
@@ -73,7 +75,10 @@ namespace NatShopB2C_API.AutoMapper
 
             CreateMap<MenuDTO, Menu>().ReverseMap()
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.Id));
-                //.ForMember(x =>x.CategoryId, o => o.MapFrom(x => x.ParentMenuId));
+            //.ForMember(x =>x.CategoryId, o => o.MapFrom(x => x.ParentMenuId));
+
+            CreateMap<CategoryHierarchyDTO, search_CategoryDetailsTree>().ReverseMap()
+                .ForMember(x => x.CategoryID, o => o.MapFrom(x => x.CategoryID));
         }
 
     }

@@ -24,9 +24,9 @@ namespace NatShopB2C.Domain.Services
             return await _categoryRepository.GetCategories(StartIndex, EndIndex, IsActive, IsArchieve);
         }
 
-        public async Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy()
-        {
-            return await _categoryRepository.GetcategoryHierarchy();
+        public async Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve, string? SearchString)
+        { 
+            return await _categoryRepository.GetcategoryHierarchy(StartIndex, EndIndex, IsActive, IsArchieve, SearchString);
         }
     }
 }

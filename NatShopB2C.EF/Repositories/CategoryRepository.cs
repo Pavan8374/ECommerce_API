@@ -58,14 +58,14 @@ namespace NatShopB2C.EF.Repositories
             return categories;
         }
 
-        public async  Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy()
+        public async  Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve, string? SearchString)
         {
             List<CategoryHierarchyDTO> Categories = new List<CategoryHierarchyDTO>();
             var objParam = new SqlParameter("@TotalRecords", SqlDbType.Int)
             {
                 Direction = ParameterDirection.Output
             };
-            int? StartIndex = 1; int? EndIndex = 1000; bool? IsActive = true;bool? IsArchieve = false; string? SearchString = null;
+            ;
             string sql = "EXEC usp_search_CategoryDetailsTree  @StartIndex, @EndIndex, @IsActive, @IsArchieve, @SearchString, @TotalRecords OUTPUT";
 
             SqlParameter[] parms = new SqlParameter[]
@@ -96,17 +96,20 @@ namespace NatShopB2C.EF.Repositories
                     foreach (var item1 in SubCategoryList1)
                     {
                         var SubCategoryList2 = _db.Categories.Where(x => x.ParentCategoryId == item1.Id).ToList();
-                        List<CategoryHierarchyDTO> subCategory2 = new List<CategoryHierarchyDTO>();
-                        foreach (var item2 in SubCategoryList2)
-                        {
-                            subCategory2.Add(_mapper.Map<CategoryHierarchyDTO>(item2));
-                        }
                         CategoryHierarchyDTO subCategory1 = new CategoryHierarchyDTO();
-
-                        subCategory1 = _mapper.Map<CategoryHierarchyDTO>(item1);
-                        subCategory1.SubCategory = new List<CategoryHierarchyDTO>();
-                        subCategory1.SubCategory.AddRange(subCategory2);    //Add Sub Category List 2
-                        MainCategory.SubCategory.Add(subCategory1);     //Add Sub Category List 1
+                        List<CategoryHierarchyDTO> subCategory2 = new List<CategoryHierarchyDTO>();
+                        if (SubCategoryList2.Count > 0)
+                        {
+                            
+                            foreach (var item2 in SubCategoryList2)
+                            {
+                                subCategory2.Add(_mapper.Map<CategoryHierarchyDTO>(item2));
+                            }                           
+                            subCategory1 = _mapper.Map<CategoryHierarchyDTO>(item1);
+                            subCategory1.SubCategory = new List<CategoryHierarchyDTO>();
+                            subCategory1.SubCategory.AddRange(subCategory2);
+                            MainCategory.SubCategory.Add(subCategory1);
+                        }                      
                     }
                     Categories.Add(MainCategory);
                 }
@@ -116,6 +119,8 @@ namespace NatShopB2C.EF.Repositories
             {
                 return null;
             }
+            //var categories = _mapper.Map<List<CategoryHierarchyDTO>>(categoriesList);
+            //return categories;
         }
 
     }
