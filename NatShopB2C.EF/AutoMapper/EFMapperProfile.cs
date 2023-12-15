@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using NatShopB2C.Domain.DTO;
 using NatShopB2C.Domain.Models;
+using NatShopB2C.Domain.StoredProcedureModels;
 using NatShopB2C.EF.Common.DTO;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,8 @@ namespace NatShopB2C.EF.AutoMapper
                  .ForMember(x => x.IsParentActive, o => o.MapFrom(x =>x.ParentCategory.IsActive))
                  .ForMember(x => x.IsParentDelete, o => o.MapFrom(x =>x.ParentCategory.IsDelete))
                  .ForMember(dest => dest.SubCategory, opt => opt.Ignore());
+            CreateMap<GlobalSearchDTO, search_ProductPopup>().ReverseMap()
+                .ForMember(x => x.ID, o => o.MapFrom(x => x.ID));
             
         }
     }

@@ -23,18 +23,27 @@ ConfigurationManager configuration = builder.Configuration;
 //for repository pattern
 builder.Services.AddTransient<IAccountRepository, AccountRepository>();
 builder.Services.AddTransient<IAccountService, AccountService>();
+
 builder.Services.AddTransient<IProductRepository, ProductRepository>();
 builder.Services.AddTransient<IProductService, ProductService>();
+
 builder.Services.AddTransient<IBrandRepository, BrandRepository>();
 builder.Services.AddTransient<IBrandService, BrandService>();
+
 builder.Services.AddTransient<IAddressBookRepository, AddressBookRepository>();
 builder.Services.AddTransient<IAddressBookService, AddressBookService>();
+
 builder.Services.AddTransient<ICartRepository, CartRepository>();
 builder.Services.AddTransient<ICartService, CartService>();
+
 builder.Services.AddTransient<IMenuRepository, MenuRepository>();
 builder.Services.AddTransient<IMenuService, MenuService>();
+
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+
+builder.Services.AddTransient<IGlobalSearchRepository, GlobalSearchRepository>();
+builder.Services.AddTransient<IGlobalSearchService, GlobalSearchService>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options

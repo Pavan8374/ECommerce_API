@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NatShopB2C.Domain.StoredProcedureModels
 {
-    public class usp_select_SubCategoriesByCategoryID
+    public class select_SubCategoriesByCategoryID
     {
         public int? ID { get; set; }
         public string? CategoryName { get; set; }

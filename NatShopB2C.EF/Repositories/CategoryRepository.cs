@@ -28,7 +28,6 @@ namespace NatShopB2C.EF.Repositories
 
         public async Task<List<select_CategoryDetailsByFilter>> GetCategories(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve)
         {
-            bool IsShowOutofStockProducts = true;
 
             // Specify SqlDbType.Int for objParam
             var objParam = new SqlParameter("@TotalRecords", SqlDbType.Int)
@@ -41,11 +40,11 @@ namespace NatShopB2C.EF.Repositories
             SqlParameter[] parms = new SqlParameter[]
             {
                 // Create parameters    
-        new SqlParameter("@StartIndex", StartIndex),
-        new SqlParameter("@EndIndex", EndIndex),
-        new SqlParameter("@IsActive", IsActive),
-        new SqlParameter("@IsArchieve", IsArchieve),
-        objParam // Use objParam directly
+                new SqlParameter("@StartIndex", StartIndex),
+                new SqlParameter("@EndIndex", EndIndex),
+                new SqlParameter("@IsActive", IsActive),
+                new SqlParameter("@IsArchieve", IsArchieve),
+                objParam // Use objParam directly
             };
 
             var categories = await _db.select_CategoryDetailsByFilter

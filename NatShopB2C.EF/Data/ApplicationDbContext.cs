@@ -162,10 +162,11 @@ namespace NatShopB2C.EF.Data
 
 
         public DbSet<ProductByAllFilterOptions> ProductByAllFilterOptions { get; set; }
-        public DbSet<usp_select_SubCategoriesByCategoryID> usp_select_SubCategoriesByCategoryID { get; set; }
+        public DbSet<select_SubCategoriesByCategoryID> usp_select_SubCategoriesByCategoryID { get; set; }
         public DbSet<select_ProductsDetailsByFilter> select_ProductsDetailsByFilter { get; set; }
         public DbSet<select_CategoryDetailsByFilter> select_CategoryDetailsByFilter { get; set; }
         public DbSet<search_CategoryDetailsTree> search_CategoryDetailsTree { get; set; }
+        public DbSet<search_ProductPopup> search_ProductPopup { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -4597,10 +4598,11 @@ namespace NatShopB2C.EF.Data
 
 
             modelBuilder.Entity<ProductByAllFilterOptions>().HasNoKey().ToView(null);
-            modelBuilder.Entity<usp_select_SubCategoriesByCategoryID>().HasNoKey().ToView(null);
+            modelBuilder.Entity<select_SubCategoriesByCategoryID>().HasNoKey().ToView(null);
             modelBuilder.Entity<select_ProductsDetailsByFilter>().HasNoKey().ToView(null);
             modelBuilder.Entity<select_CategoryDetailsByFilter>().HasNoKey().ToView(null);
             modelBuilder.Entity<search_CategoryDetailsTree>().HasNoKey().ToView(null);
+            modelBuilder.Entity<search_ProductPopup>().HasNoKey().ToView(null);
 
             OnModelCreatingPartial(modelBuilder);
 

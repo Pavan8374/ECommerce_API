@@ -467,7 +467,7 @@ namespace NatShopB2C.EF.Repositories
             return products;
         }
 
-        public async Task<List<usp_select_SubCategoriesByCategoryID>> GetSubCategoriesByCategoryID(int categoryID)
+        public async Task<List<select_SubCategoriesByCategoryID>> GetSubCategoriesByCategoryID(int categoryID)
         {
             string sql = "EXEC usp_select_SubCategoriesByCategoryID  @categoryID";
 
