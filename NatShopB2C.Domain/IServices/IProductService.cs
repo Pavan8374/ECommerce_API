@@ -15,8 +15,10 @@ namespace NatShopB2C.Domain.IServices
         Task<Product> UpdateProduct(Product product);
         Task<Product> DeleteProduct(Product product);
         Task<List<Product>> GetProducts();
+        Task<List<select_ProductsDetailsByFilter>> GetProductsByFilter(int? startIndex, int? endIndex, string? ProductID, bool? isActive, bool? isDelete);
+
         //Task<List<ProductImagePathDTO>> GetProducts();
-        Task <Product> GetProduct(Guid? id);
+        Task<Product> GetProduct(Guid? id);
         Task<ProductVariation> AddProductVarient(ProductVariation varient);
         //Task<List<Product>> LoadProductData(int? Start, int? End, string ProductID, string BrandID, string CategoryID, string UsageTypeID, string Keyword, string SpecificationValueList, string DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string OrderColumn, bool IsAscending);
         Task<List<ProductByAllFilterOptions>> GetProductsByFilterOptions(int? Start, int? End, string? ProductID, string? BrandID, string? CategoryID, string? UsageTypeID, string? Keyword, string? SpecificationValueList, string? DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string? OrderColumn, bool? IsAscending);
