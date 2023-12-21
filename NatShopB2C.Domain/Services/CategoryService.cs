@@ -1,4 +1,5 @@
-﻿using NatShopB2C.Domain.IRepositories;
+﻿using NatShopB2C.Domain.DTO;
+using NatShopB2C.Domain.IRepositories;
 using NatShopB2C.Domain.IServices;
 using NatShopB2C.Domain.Models;
 using NatShopB2C.Domain.StoredProcedureModels;
@@ -27,6 +28,14 @@ namespace NatShopB2C.Domain.Services
         public async Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve, string? SearchString)
         { 
             return await _categoryRepository.GetcategoryHierarchy(StartIndex, EndIndex, IsActive, IsArchieve, SearchString);
+        }
+        public async Task<List<Category>> GetCategory(string? CategoryName, int? Id)
+        {
+            return await _categoryRepository.GetCategory(CategoryName, Id);
+        }
+        public async Task<List<CategorySliderDTO>> GetCategoriesSlider()
+        {
+            return await _categoryRepository.GetCategoriesSlider();
         }
     }
 }

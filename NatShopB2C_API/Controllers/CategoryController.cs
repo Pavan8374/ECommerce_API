@@ -80,5 +80,35 @@ namespace NatShopB2C_API.Controllers
 
             }
         }
+
+
+        [HttpGet]
+        [Route("Getcategory")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Response>> GetCategory(string? CategoryName, int? Id)
+        {
+            {
+                try
+                {
+                    var categories = await _categoryService.GetCategory(CategoryName, Id);
+                    if (categories == null)
+                    {
+                        return NotFound();
+                    }
+                    //var list = categories;
+                    response.Result = _mapper.Map<List<CategoryDTO>>(categories);
+                    response.StatusCode = System.Net.HttpStatusCode.OK;
+                    return Ok(response);
+                }
+                catch (Exception ex)
+                {
+                    response.IsSuccess = false;
+                    response.ErrorMessages = new List<string>() { ex.ToString() };
+                }
+                return response;
+
+            }
+        }
     }
 }
