@@ -18,16 +18,21 @@ using NatShopB2C.Domain.StoredProcedureModels;
 using System.Data;
 using System.Collections;
 using System.Web;
+using Microsoft.AspNetCore.Http;
+using AutoMapper;
+using NatShopB2C.EF.Common.DTO.ProdutDTOs;
+using System.Drawing;
 
 namespace NatShopB2C.EF.Repositories
 {
     public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _db;
-        
-        public ProductRepository(ApplicationDbContext db)
+        private readonly IMapper _mapper;
+        public ProductRepository(ApplicationDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
         public async Task<Product> AddProduct(Product product)
@@ -132,6 +137,11 @@ namespace NatShopB2C.EF.Repositories
         public async Task<Product> GetProduct(Guid? id)
         {
             var product = await _db.Products.AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();
+            return product;
+        }
+        public Product GetProductById(Guid? id)
+        {
+            var product = _db.Products.AsNoTracking().Where(x => x.Id == id).FirstOrDefault();
             return product;
         }
         public async Task<ProductVariation> AddProductVarient(ProductVariation varient)
@@ -467,7 +477,7 @@ namespace NatShopB2C.EF.Repositories
             return products;
         }
 
-        public async Task<List<usp_select_SubCategoriesByCategoryID>> GetSubCategoriesByCategoryID(int categoryID)
+        public async Task<List<select_SubCategoriesByCategoryID>> GetSubCategoriesByCategoryID(int categoryID)
         {
             string sql = "EXEC usp_select_SubCategoriesByCategoryID  @categoryID";
 
@@ -481,6 +491,554 @@ namespace NatShopB2C.EF.Repositories
                 .ToListAsync();
             return categories;
         }
+        public bool IsAllowedOutofStockInCart = true;
+        public async Task<List<select_Slider_NewProduct>> GetNewProduct(int? StartIndex, int? EndIndex)
+        {
+            List<NewProdcutDTO> newproductlist = new List<NewProdcutDTO>();
+            var productlist = await _db.select_Slider_NewProduct.FromSqlRaw($"usp_select_Slider_NewProduct {StartIndex}, {EndIndex}").ToListAsync();
+            if (productlist != null)
+            {
+                foreach (var productitem in productlist)
+                {
+                    Product objNewProduct = GetProductById(productitem.ProductID);
+
+
+                    if (objNewProduct == null)
+                    {
+                        continue;
+                    }
+                    int AvailableStockQty = 0;
+                    string ProductName = string.Empty;
+                    string ProductImage = string.Empty;
+                    string ProductPriceID = string.Empty;
+                    ProductVariation objProductVarient = objNewProduct.ProductVariations.Where(x => x.IsDefaultProductVariation == true).FirstOrDefault();
+                    if (objProductVarient != null)
+                    {
+                        ProductName = (objProductVarient.Caption != null) ? objProductVarient.Caption.ToString() : objProductVarient.Product.ProductName.ToString();
+                        if (objProductVarient.ProductVariationImages.Count > 0)
+                        {
+                            ProductVariationImage objProductVarientImage = objProductVarient.ProductVariationImages.Where(x => x.ImageOrderNo == 0).FirstOrDefault();
+                            if (objProductVarientImage != null)
+                            {
+                                int Position = objProductVarientImage.Image.ImagePath.IndexOf(objProductVarientImage.Image.Id.ToString());
+                                string ImageName = objProductVarientImage.Image.ImagePath.Substring(Position);
+                                string DirectoryName = objProductVarientImage.Image.ImagePath.Replace(ImageName, "").Replace("~/", "");
+                                DirectoryName += "Medium/";
+                                ImageName = DirectoryName + ImageName;
+                                //if (!File.Exists(HttpContext.Current.Server.MapPath(Subdomain + ImageName)))
+                                //{
+                                //    ProductImage = Subdomain + ImageName;
+                                //}
+                                //else
+                                //{
+                                //    ProductImage = "/img/NoImage.jpg";
+                                //}
+                            }
+                            else
+                            {
+                                ProductImage = "/img/NoImage.jpg";
+                            }
+                        }
+                        else
+                        {
+                            ProductImage = "/img/NoImage.jpg";
+                        }
+
+                        if (objProductVarient.ProductVariationPrices.Count() > 0)
+                        {
+                            ProductVariationPrice objProductVarientPrice = objProductVarient.ProductVariationPrices.Where(x => x.IsDefaultPrice == true).FirstOrDefault();
+                            if (objProductVarientPrice != null)
+                            {
+                                ProductPriceID = objProductVarientPrice.PriceId.ToString();
+                            }
+                            else
+                            {
+                                ProductPriceID = null;
+                            }
+                        }
+                        else
+                        {
+                            ProductPriceID = null;
+                        }
+                    }
+
+
+                    //    else
+                    //    {
+                    //        ProductName = objNewProduct.ProductName.ToString();
+                    //        ProductImage = "";
+                    //        ProductPriceID = "";
+                    //    }
+                    //    bool IsAddToCartVisiable = true;
+                    //    SystemFlag objsysflag = null;
+                    //    bool IsOutofStock = true;
+                    //    objsysflag = await _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToCartButton")).FirstOrDefaultAsync();
+                    //    if (objsysflag != null)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //        {
+                    //            IsAddToCartVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //        }
+                    //    }
+
+                    //    if (IsAddToCartVisiable)
+                    //    {
+                    //        IsOutofStock = IsProductOutofStock(objNewProduct, 1, out AvailableStockQty);
+                    //        if (IsOutofStock == true && IsAllowedOutofStockInCart == false)
+                    //        {
+                    //            IsAddToCartVisiable = false;
+                    //        }
+                    //    }
+
+                    //    bool IsAddToWishListVisiable = true;
+                    //    objsysflag = await _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToWishListButton")).FirstOrDefaultAsync();
+                    //    if (objsysflag != null)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //        {
+                    //            IsAddToWishListVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //        }
+                    //    }
+
+                    //    bool IsAddToCompareVisiable = true;
+                    //    objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToCompareButton")).FirstOrDefault();
+                    //    if (objsysflag != null)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //        {
+                    //            IsAddToCompareVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //        }
+                    //    }
+
+                    //    bool IsPriceVisiable = true;
+                    //    objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowPrice")).FirstOrDefault();
+                    //    if (objsysflag != null)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //        {
+                    //            IsPriceVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //        }
+                    //    }
+
+                    //    newproductlist.Add(new NewProdcutDTO()
+                    //    {
+                    //        ProductID = objNewProduct.ToString(),
+                    //        ProductVariationID = objProductVarient.Id.ToString(),
+                    //        ProductName = ProductName,
+                    //        ProdcutDesc = objNewProduct.Description,
+                    //        Price = Convert.ToDecimal(productitem.Price),
+                    //        ProductCode = productitem.ProductCode,
+                    //        ImagePath = ProductImage,
+                    //        ProductPriceID = ProductPriceID,
+                    //        Rating = Convert.ToDecimal(productitem.Rating),
+                    //        IsAddToCartVisiable = IsAddToCartVisiable,
+                    //        IsAddToWishListVisiable = IsAddToWishListVisiable,
+                    //        IsAddToCompareVisiable = IsAddToCompareVisiable,
+                    //        IsPriceVisiable = IsPriceVisiable,
+                    //        IsOutofStock = IsOutofStock
+                    //    });
+                    //}
+                    //return _mapper.Map<List<select_Slider_NewProduct>>(newproductlist);
+                }
+                return productlist;
+            }
+            else
+            {
+                return null;
+            }
+
+
+        }
+     
+
+        public async Task<List<select_Slider_UpCommingProduct>> GetUpcomingProducts(int? StartIndex, int? EndIndex)
+        {
+            List<UpCommingProductDTO> _objUpcommingProduct = new List<UpCommingProductDTO>();
+            var productlist = await _db.select_Slider_UpCommingProduct.FromSqlRaw($"usp_select_Slider_UpCommingProduct {StartIndex}, {EndIndex}").ToListAsync();
+            if (productlist != null)
+            {
+                foreach (var productitem in productlist)
+                {
+                    Product objUpcommingProduct = GetProductById(productitem.ProductID);
+
+
+                    if (objUpcommingProduct == null)
+                    {
+                        continue;
+                    }
+                    int AvailableStockQty = 0;
+                    string ProductName = string.Empty;
+                    string ProductImage = string.Empty;
+                    string ProductPriceID = string.Empty;
+                    ProductVariation objProductVarient = objUpcommingProduct.ProductVariations.Where(x => x.IsDefaultProductVariation == true).FirstOrDefault();
+                    if (objProductVarient != null)
+                    {
+                        ProductName = (objProductVarient.Caption != null) ? objProductVarient.Caption.ToString() : objProductVarient.Product.ProductName.ToString();
+                        if (objProductVarient.ProductVariationImages.Count > 0)
+                        {
+                            ProductVariationImage objProductVarientImage = objProductVarient.ProductVariationImages.Where(x => x.ImageOrderNo == 0).FirstOrDefault();
+                            if (objProductVarientImage != null)
+                            {
+                                int Position = objProductVarientImage.Image.ImagePath.IndexOf(objProductVarientImage.Image.Id.ToString());
+                                string ImageName = objProductVarientImage.Image.ImagePath.Substring(Position);
+                                string DirectoryName = objProductVarientImage.Image.ImagePath.Replace(ImageName, "").Replace("~/", "");
+                                DirectoryName += "Medium/";
+                                ImageName = DirectoryName + ImageName;
+                                //if (!File.Exists(HttpContext.Current.Server.MapPath(Subdomain + ImageName)))
+                                //{
+                                //    ProductImage = Subdomain + ImageName;
+                                //}
+                                //else
+                                //{
+                                //    ProductImage = "/img/NoImage.jpg";
+                                //}
+                            }
+                            else
+                            {
+                                ProductImage = "/img/NoImage.jpg";
+                            }
+                        }
+                        else
+                        {
+                            ProductImage = "/img/NoImage.jpg";
+                        }
+
+                        if (objProductVarient.ProductVariationPrices.Count() > 0)
+                        {
+                            ProductVariationPrice objProductVarientPrice = objProductVarient.ProductVariationPrices.Where(x => x.IsDefaultPrice == true).FirstOrDefault();
+                            if (objProductVarientPrice != null)
+                            {
+                                ProductPriceID = objProductVarientPrice.PriceId.ToString();
+                            }
+                            else
+                            {
+                                ProductPriceID = null;
+                            }
+                        }
+                        else
+                        {
+                            ProductPriceID = null;
+                        }
+                    }
+                    //    else
+                    //    {
+                    //        ProductName = productitem.ProductName.ToString();
+                    //        ProductImage = "";
+                    //        ProductPriceID = "";
+                    //    }
+
+                    //    bool IsAddToCartVisiable = true;
+                    //    SystemFlag objsysflag = null;
+                    //    bool IsOutofStock = true;
+                    //    objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToCartButton")).FirstOrDefault();
+                    //    {
+                    //        if (objsysflag != null)
+                    //        {
+                    //            if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //            {
+                    //                IsAddToCartVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //            }
+                    //        }
+                    //    }
+                    //    if (IsAddToCartVisiable)
+                    //    {
+                    //        IsOutofStock = IsProductOutofStock(objUpcommingProduct, 1, out AvailableStockQty);
+                    //        if (IsOutofStock == true && IsAllowedOutofStockInCart == false)
+                    //        {
+                    //            IsAddToCartVisiable = false;
+                    //        }
+                    //    }
+                    //    bool IsAddToWishListVisiable = true;
+                    //    objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToWishListButton")).FirstOrDefault();
+                    //    if (objsysflag != null)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //        {
+                    //            IsAddToWishListVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //        }
+                    //    }
+                    //    bool IsAddToCompareVisiable = true;
+                    //    objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToCompareButton")).FirstOrDefault();
+                    //    if (objsysflag != null)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //        {
+                    //            IsAddToCompareVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //        }
+                    //    }
+                    //    bool IsPriceVisiable = true;
+                    //    objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowPrice")).FirstOrDefault();
+                    //    if (objsysflag != null)
+                    //    {
+                    //        if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //        {
+                    //            IsPriceVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //        }
+                    //    }
+                    //    IsOutofStock = IsProductOutofStock(objProductVarient.Product, 1, out AvailableStockQty);
+                    //    _objUpcommingProduct.Add(new UpCommingProductDTO()
+                    //    {
+                    //        ProductID = productitem.ProductID.ToString(),
+                    //        ProductVariationID = productitem.ProductVariationID.ToString(),
+                    //        ProductName = ProductName,
+                    //        ProdcutDesc = objUpcommingProduct.Description,
+                    //        Price = Convert.ToDecimal(productitem.Price),
+                    //        ProductCode = productitem.ProductCode,
+                    //        ImagePath = ProductImage,
+                    //        ProductPriceID = ProductPriceID,
+                    //        Rating = Convert.ToDecimal(productitem.Rating),
+                    //        IsAddToCartVisiable = IsAddToCartVisiable,
+                    //        IsAddToWishListVisiable = IsAddToWishListVisiable,
+                    //        IsAddToCompareVisiable = IsAddToCompareVisiable,
+                    //        IsPriceVisiable = IsPriceVisiable,
+                    //        IsOutofStock = IsOutofStock
+
+                    //    });
+                    //}
+                    //return _mapper.Map<List<select_Slider_UpCommingProduct>>(_objUpcommingProduct);
+                }
+                return productlist;
+            }
+            else
+            {
+                return null;
+            }
+            
+            
+        }
+
+        public bool IsProductOutofStock(Product objProduct, int quantity, out int AvailableStockQty)
+        {
+            bool IsOutOfStock = true;
+            AvailableStockQty = 0;
+            try
+            {
+                if (objProduct != null)
+                {
+                    switch (objProduct.StockTypeId)
+                    {
+                        case 1:
+                            //Available
+                            IsOutOfStock = false;
+                            break;
+                        case 2:
+                            //InStock
+                            if (objProduct.StockQuantity != null)
+                            {
+                                if (objProduct.StockQuantity >= quantity)
+                                {
+                                    IsOutOfStock = false;
+                                }
+                                else
+                                {
+                                    AvailableStockQty = (int)objProduct.StockQuantity;
+                                    IsOutOfStock = true;
+                                }
+                            }
+                            else
+                            {
+                                IsOutOfStock = true;
+                            }
+                            break;
+                        case 3:
+                            //Not available
+                            IsOutOfStock = true;
+                            break;
+                        case 4:
+                            //Pre-Order
+                            IsOutOfStock = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    IsOutOfStock = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                IsOutOfStock = true;
+            }
+            return IsOutOfStock;
+        }
+
+        public async Task<List<Advertiesment>> GetAdvertiesments()
+        {
+            var ads = await _db.Advertiesments.AsNoTracking().ToListAsync();
+            return ads;
+        }
+
+        public async Task<List<select_Slider_PopularProduct>> GetPopularProducts(int? StartIndex = null, int? EndIndex = null, bool? IsShowOutofStock = true)
+        {
+            List<PopularProductDTO> _objPopularProducts = new List<PopularProductDTO>();
+            //var plist = _objPopularProducts.ToList();
+            var productlist = await _db.select_Slider_PopularProduct.FromSqlRaw($"usp_select_Slider_PopularProduct {StartIndex}, {EndIndex}").ToListAsync();
+            if (productlist != null)
+            {
+                
+                foreach (var productitem in productlist)
+                {
+                    Product objPopularProduct = GetProductById(productitem.ProductID);
+
+                    if (objPopularProduct == null)
+                    {
+                        continue;
+                    }
+
+                    string Rating = string.Empty;
+                    string ProductName = string.Empty;
+                    string ImagePath = string.Empty;
+                    string ProductPriceID = string.Empty;
+                    int AvailableStockQty = 0;
+                    ProductVariation objProductVarient = objPopularProduct.ProductVariations.Where(x => x.IsDefaultProductVariation == true).FirstOrDefault();
+                    if (objProductVarient != null)
+                    {
+                        if (objProductVarient.Rating != null)
+                        {
+                            Rating = Math.Round((decimal)objProductVarient.Rating).ToString();
+                        }
+                        else
+                        {
+                            Rating = "0";
+                        }
+
+                        ProductName = (objProductVarient.Caption != null) ? objProductVarient.Caption.ToString() : objProductVarient.Product.ProductName.ToString();
+                        if (objProductVarient.ProductVariationImages.Count > 0)
+                        {
+                            ProductVariationImage objProductVarientImage = objProductVarient.ProductVariationImages.Where(x => x.ImageOrderNo == 0).FirstOrDefault();
+                            if (objProductVarientImage != null)
+                            {
+                                int Position = objProductVarientImage.Image.ImagePath.IndexOf(objProductVarientImage.Image.Id.ToString());
+                                string ImageName = objProductVarientImage.Image.ImagePath.Substring(Position);
+                                string DirectoryName = objProductVarientImage.Image.ImagePath.Replace(ImageName, "").Replace("~/", "");
+                                //DirectoryName += "Medium/";
+                                ImageName = DirectoryName + ImageName;
+                                //if (!File.Exists(HttpContext.Current.Server.MapPath(Subdomain + ImageName)))
+                                //{
+                                //    ImagePath = Subdomain + ImageName;
+                                //}
+                                //else
+                                //{
+                                //    ImagePath = "/img/NoImage.jpg";
+                                //}
+                            }
+                            else
+                            {
+                                ImagePath = "/img/NoImage.jpg";
+                            }
+                        }
+                        else
+                        {
+                            ImagePath = "/img/NoImage.jpg";
+                        }
+
+                        if (objProductVarient.ProductVariationPrices.Count() > 0)
+                        {
+                            ProductVariationPrice objProductVarientPrice = objProductVarient.ProductVariationPrices.Where(x => x.IsDefaultPrice == true).FirstOrDefault();
+                            if (objProductVarientPrice != null)
+                            {
+                                ProductPriceID = objProductVarientPrice.PriceId.ToString();
+                            }
+                            else
+                            {
+                                ProductPriceID = "";
+                            }
+                        }
+                        else
+                        {
+                            ProductPriceID = "";
+                        }
+
+                    }
+                    //bool IsAddToCartVisiable = true;
+                    //SystemFlag objsysflag = null;
+                    //bool IsOutofStock = true;
+                    //objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToCartButton")).FirstOrDefault();
+                    //if (objsysflag != null)
+                    //{
+                    //    if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //    {
+                    //        IsAddToCartVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //    }
+                    //}
+
+                    //if (IsAddToCartVisiable)
+                    //{
+                    //    //IsOutofStock = IsProductOutofStock(objProductVarient.Product, 1, out AvailableStockQty);
+                    //    if (IsOutofStock == true && IsAllowedOutofStockInCart == false)
+                    //    {
+                    //        IsAddToCartVisiable = false;
+                    //    }
+                    //}
+
+                    //bool IsAddToWishListVisiable = true;
+                    //objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToWishListButton")).FirstOrDefault();
+                    //if (objsysflag != null)
+                    //{
+                    //    if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //    {
+                    //        IsAddToWishListVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //    }
+                    //}
+
+                    //bool IsAddToCompareVisiable = true;
+                    //objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowAddToCompareButton")).FirstOrDefault();
+                    //if (objsysflag != null)
+                    //{
+                    //    if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //    {
+                    //        IsAddToCompareVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //    }
+                    //}
+
+                    //bool IsPriceVisiable = true;
+                    //objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysShowPrice")).FirstOrDefault();
+                    //if (objsysflag != null)
+                    //{
+                    //    if (!string.IsNullOrEmpty(objsysflag.Value))
+                    //    {
+                    //        IsPriceVisiable = Convert.ToBoolean(objsysflag.Value);
+                    //    }
+                    //}
+
+                    //IsOutofStock = IsProductOutofStock(objProductVarient.Product, 1, out AvailableStockQty);
+
+                    //_objPopularProducts.Add(new PopularProductDTO()
+                    //{
+                    //    ProductID = productitem.ProductID.ToString(),
+                    //    ProductVariationID = objProductVarient.Id.ToString(),
+                    //    ProductName = ProductName,
+                    //    ProdcutDesc = objProductVarient.Product.Description,
+                    //    Rating = Rating,
+                    //    Price = productitem.Price,
+                    //    ProductCode = objProductVarient.Product.ProductCode,
+                    //    ImagePath = ImagePath,
+                    //    ProductPriceID = ProductPriceID,
+                    //    IsAddToCartVisiable = IsAddToCartVisiable,
+                    //    IsAddToWishListVisiable = IsAddToWishListVisiable,
+                    //    IsAddToCompareVisiable = IsAddToCompareVisiable,
+                    //    IsPriceVisiable = IsPriceVisiable,
+                    //    IsOutofStock = IsOutofStock
+                    //});
+                    
+                }
+                return productlist;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+
+
+
+
+
+
+
 
         //public async Task<ProductDetailDTO> GetProduct(Guid? ProductVariationID)
         //{

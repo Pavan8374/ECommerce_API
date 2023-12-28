@@ -23,8 +23,4 @@
     <ProjectReference Include="..\NatShopB2C.Domain\NatShopB2C.Domain.csproj" />    
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Common\DTO\" />
-  </ItemGroup>
-
 </Project>

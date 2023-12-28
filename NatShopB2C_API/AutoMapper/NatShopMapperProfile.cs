@@ -79,6 +79,9 @@ namespace NatShopB2C_API.AutoMapper
 
             CreateMap<CategoryHierarchyDTO, search_CategoryDetailsTree>().ReverseMap()
                 .ForMember(x => x.CategoryID, o => o.MapFrom(x => x.CategoryID));
+            CreateMap<CategoryDTO, Category>().ReverseMap()
+                .ForMember(x => x.CategoryID, o => o.MapFrom(x => x.Id))
+                .ForMember(x=>x.CategoryName, o => o.MapFrom(x =>x.CategoryName));
         }
 
     }

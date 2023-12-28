@@ -71,5 +71,25 @@ namespace NatShopB2C.Domain.Services
         {
             return await _productrepository.GetProductByFilterOption(ID);
         }
+
+        public async Task<List<select_Slider_NewProduct>> GetNewProduct(int? StartIndex, int? EndIndex)
+        {
+            return await _productrepository.GetNewProduct(StartIndex, EndIndex);
+        }
+
+        public async Task<List<select_Slider_UpCommingProduct>> GetUpcomingProducts(int? StartIndex, int? EndIndex)
+        {
+            return await _productrepository.GetUpcomingProducts(StartIndex, EndIndex);
+        }
+
+        public async Task<List<select_Slider_PopularProduct>> GetPopularProducts(int? StartIndex = null, int? EndIndex = null, bool? IsShowOutofStock = true)
+        {
+            return await _productrepository.GetPopularProducts(StartIndex, EndIndex, IsShowOutofStock);
+        }
+
+        public async Task<List<Advertiesment>> GetAdvertiesments()
+        {
+            return await _productrepository.GetAdvertiesments();
+        }
     }
 }

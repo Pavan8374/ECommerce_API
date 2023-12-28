@@ -20,4 +20,9 @@ namespace NatShopB2C.EF.Common.DTO
 
         public List<CategoryHierarchyDTO> SubCategory { get; set; }
     }
+    public class CategoryDTO
+    {
+        public int? CategoryID { get; set; }
+        public string? CategoryName { get; set; }
+    }
 }

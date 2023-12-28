@@ -1,4 +1,5 @@
-﻿using NatShopB2C.Domain.Models;
+﻿using NatShopB2C.Domain.IRepositories;
+using NatShopB2C.Domain.Models;
 using NatShopB2C.EF.Data;
 using System;
 using System.Collections.Generic;
@@ -31,10 +32,10 @@ namespace NatShopB2C.EF.Common
         Invalid = 11,
         Initiate = 12
     }
-    public class BusinessClass
+    public class ResourceRepository : IResourceRepository
     {
         private readonly ApplicationDbContext _db;
-        public BusinessClass(ApplicationDbContext db)
+        public ResourceRepository(ApplicationDbContext db)
         {
             _db = db;
         }
