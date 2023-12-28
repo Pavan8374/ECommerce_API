@@ -2,11 +2,8 @@
 
 namespace NatShopB2C_API.Controllers
 {
-    public class SliderController : Controller
+    public class SliderController : ControllerBase
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        
     }
 }

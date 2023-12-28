@@ -13,9 +13,9 @@ namespace NatShopB2C.EF.Common.Products
     public class ProductCommonClass
     {
         private readonly ApplicationDbContext _db;
-        private readonly BusinessClass _bc;
+        private readonly ResourceRepository _bc;
         Currency CC = new Currency();
-        public ProductCommonClass(ApplicationDbContext db, BusinessClass bc)
+        public ProductCommonClass(ApplicationDbContext db, ResourceRepository bc)
         {
             _db = db;
             _bc = bc;

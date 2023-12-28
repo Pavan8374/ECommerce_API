@@ -33,9 +33,9 @@ namespace NatShopB2C.Domain.Services
         {
             return await _categoryRepository.GetCategory(CategoryName, Id);
         }
-        public async Task<List<CategorySliderDTO>> GetCategoriesSlider()
-        {
-            return await _categoryRepository.GetCategoriesSlider();
-        }
+        //public async Task<List<CategorySliderDTO>> GetCategoriesSlider()
+        //{
+        //    return await _categoryRepository.GetCategoriesSlider();
+        //}
     }
 }

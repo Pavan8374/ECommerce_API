@@ -7,6 +7,7 @@ using NatShopB2C.Domain.IRepositories;
 using NatShopB2C.Domain.IServices;
 using NatShopB2C.Domain.Services;
 using NatShopB2C.EF.AutoMapper;
+using NatShopB2C.EF.Common;
 using NatShopB2C.EF.Data;
 using NatShopB2C.EF.Repositories;
 using NatShopB2C_API.AutoMapper;
@@ -44,6 +45,8 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 builder.Services.AddTransient<IGlobalSearchRepository, GlobalSearchRepository>();
 builder.Services.AddTransient<IGlobalSearchService, GlobalSearchService>();
+
+builder.Services.AddTransient<IResourceRepository, ResourceRepository>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options

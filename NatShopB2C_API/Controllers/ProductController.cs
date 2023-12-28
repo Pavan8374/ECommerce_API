@@ -262,6 +262,111 @@ namespace NatShopB2C_API.Controllers
 
         }
 
+        [HttpGet]
+        [Route("GetNewProducts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Response>> GetNewProduct(int? StartIndex, int? EndIndex)
+        {
+            try
+            {               
+                var products = await _productService.GetNewProduct(StartIndex, EndIndex);
+                if (products == null)
+                {
+                    return NotFound();
+                }
+                response.Result = products;
+                response.StatusCode = System.Net.HttpStatusCode.OK;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return response;
+
+        }
+        [HttpGet]
+        [Route("GetUpcomingProducts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Response>> GetUpcomingProducts(int? StartIndex, int? EndIndex)
+        {
+            try
+            {
+                var products = await _productService.GetUpcomingProducts(StartIndex, EndIndex);
+                if (products == null)
+                {
+                    return NotFound();
+                }
+                response.Result = products;
+                response.StatusCode = System.Net.HttpStatusCode.OK;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return response;
+
+        }
+        [HttpGet]
+        [Route("GetPopularProducts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Response>> GetPopularProducts(int? StartIndex = null, int? EndIndex = null, bool? IsShowOutofStock = true)
+        {
+            try
+            {
+                var products = await _productService.GetPopularProducts(StartIndex, EndIndex,IsShowOutofStock);
+                if (products == null)
+                {
+                    return NotFound();
+                }
+                response.Result = products;
+                response.StatusCode = System.Net.HttpStatusCode.OK;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return response;
+
+        }
+
+        [HttpGet]
+        [Route("GetAdvertiesments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Response>> GetAdvertiesments()
+        {
+            try
+            {
+                var ads = await _productService.GetAdvertiesments();
+                if (ads == null)
+                {
+                    return NotFound();
+                }
+                response.Result = ads;
+                response.StatusCode = System.Net.HttpStatusCode.OK;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.ErrorMessages = new List<string>() { ex.ToString() };
+            }
+            return response;
+
+        }
         //[HttpGet]
         //[Route("GetProduct")]
         //[ProducesResponseType(StatusCodes.Status200OK)]

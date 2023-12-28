@@ -22,6 +22,9 @@ namespace NatShopB2C.Domain.IRepositories
         //Task<List<Product>> LoadProductData(int? Start, int? End, string ProductID, string BrandID, string CategoryID, string UsageTypeID, string Keyword, string SpecificationValueList, string DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string OrderColumn, bool IsAscending);
         Task<List<ProductByAllFilterOptions>> GetProductsByFilterOptions(int? Start, int? End, string? ProductID, string? BrandID, string? CategoryID, string? UsageTypeID, string? Keyword, string? SpecificationValueList, string? DiscountIDList, decimal? MinPrice, decimal? MaxPrice, string? OrderColumn, bool? IsAscending);
         Task<List<ProductByAllFilterOptionsDTO>> GetProductByFilterOption(string ID);
-
+        Task<List<select_Slider_NewProduct>> GetNewProduct(int? StartIndex, int? EndIndex);
+        Task<List<select_Slider_UpCommingProduct>>GetUpcomingProducts(int? StartIndex, int? EndIndex);
+        Task<List<select_Slider_PopularProduct>> GetPopularProducts(int? StartIndex = null, int? EndIndex = null, bool? IsShowOutofStock = true);
+        Task<List<Advertiesment>> GetAdvertiesments();
     }
 }

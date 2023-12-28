@@ -25,9 +25,9 @@ namespace NatShopB2C.EF.Repositories
     {
         private readonly ApplicationDbContext _db;
         private readonly IMapper _mapper;
-        protected Category CategorySliderCategory = null;
-        protected readonly ProductRepository _productRepository;
-        private readonly BusinessClass bc;
+        //protected Category CategorySliderCategory = null;
+        //private readonly ProductRepository _productRepository;
+        //private readonly ResourceRepository bc;
 
 
 
@@ -38,12 +38,12 @@ namespace NatShopB2C.EF.Repositories
             set { _Subdomain = value; }
         }
 
-        public CategoryRepository(ApplicationDbContext db, IMapper mapper, ProductRepository productRepository, BusinessClass bc)
+        public CategoryRepository(ApplicationDbContext db, IMapper mapper)
         {
             _db = db;
             _mapper = mapper;
-            _productRepository = productRepository;
-            this.bc = bc;
+            //_productRepository = productRepository;
+            //this.bc = bc;
         }
 
         public async Task<List<select_CategoryDetailsByFilter>> GetCategories(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve)
@@ -167,239 +167,239 @@ namespace NatShopB2C.EF.Repositories
             }
         }
         
-        public async Task<List<CategorySliderDTO>> GetCategoriesSlider()
-        {
+        //public async Task<List<CategorySliderDTO>> GetCategoriesSlider()
+        //{
 
             
-            //SystemFlag objsysflag = new SystemFlag();
-            bool IncludeLeaf = true;
-            bool IsTopContent = true;
+        //    //SystemFlag objsysflag = new SystemFlag();
+        //    bool IncludeLeaf = true;
+        //    bool IsTopContent = true;
 
-            List<CategorySliderDTO> _objCategoryList = new List<CategorySliderDTO>();
-            var objsysflag = await _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysCategorySliderCategory")).FirstOrDefaultAsync();
-            string CategoryName = null;
-            if (objsysflag != null)
-            {
-                if (!string.IsNullOrEmpty(objsysflag.Value))
-                {
-                    int CategoryID = Convert.ToInt32(objsysflag.Value);
-                    Category objCatgegory = await _db.Categories.Where(x => x.Id == CategoryID).FirstOrDefaultAsync();
-                    if (objCatgegory != null && objCatgegory.IsActive == true && objCatgegory.IsDelete == false)
-                    {
-                        CategorySliderCategory = objCatgegory;
-                    }
-                }
-            }
-            if (CategorySliderCategory != null)
-            {
-                //for With Leaf and Subcategory setting
-                objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysCategorySliderCategoryWithLeaf")).FirstOrDefault();
-                if (objsysflag != null)
-                {
-                    if (!string.IsNullOrEmpty(objsysflag.Value))
-                    {
-                        IncludeLeaf = Convert.ToBoolean(objsysflag.Value);
-                    }
-                }
+        //    List<CategorySliderDTO> _objCategoryList = new List<CategorySliderDTO>();
+        //    var objsysflag = await _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysCategorySliderCategory")).FirstOrDefaultAsync();
+        //    string CategoryName = null;
+        //    if (objsysflag != null)
+        //    {
+        //        if (!string.IsNullOrEmpty(objsysflag.Value))
+        //        {
+        //            int CategoryID = Convert.ToInt32(objsysflag.Value);
+        //            Category objCatgegory = await _db.Categories.Where(x => x.Id == CategoryID).FirstOrDefaultAsync();
+        //            if (objCatgegory != null && objCatgegory.IsActive == true && objCatgegory.IsDelete == false)
+        //            {
+        //                CategorySliderCategory = objCatgegory;
+        //            }
+        //        }
+        //    }
+        //    if (CategorySliderCategory != null)
+        //    {
+        //        //for With Leaf and Subcategory setting
+        //        objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysCategorySliderCategoryWithLeaf")).FirstOrDefault();
+        //        if (objsysflag != null)
+        //        {
+        //            if (!string.IsNullOrEmpty(objsysflag.Value))
+        //            {
+        //                IncludeLeaf = Convert.ToBoolean(objsysflag.Value);
+        //            }
+        //        }
 
-                //for Category Contents setting
-                objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysCategorySliderContentsIsTop10")).FirstOrDefault();
-                if (objsysflag != null)
-                {
-                    if (!string.IsNullOrEmpty(objsysflag.Value))
-                    {
-                        IsTopContent = Convert.ToBoolean(objsysflag.Value);
-                    }
-                }
+        //        //for Category Contents setting
+        //        objsysflag = _db.SystemFlags.Where(x => x.SystemFlagName.Equals("SysCategorySliderContentsIsTop10")).FirstOrDefault();
+        //        if (objsysflag != null)
+        //        {
+        //            if (!string.IsNullOrEmpty(objsysflag.Value))
+        //            {
+        //                IsTopContent = Convert.ToBoolean(objsysflag.Value);
+        //            }
+        //        }
 
-                List<select_SubCategoriesByCategoryID> objSubcategorylist = null;
-                if (IncludeLeaf)
-                {
-                    if (IsTopContent)
-                    {
-                        List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
-                        if (subcattest != null && subcattest.Count > 0)
-                        {
-                            objSubcategorylist = subcattest.Where(x => x.IsLeaf == true).Take(10).ToList();
-                        }
-                    }
-                    else
-                    {
-                        List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
-                        if (subcattest != null && subcattest.Count > 0)
-                        {
-                            objSubcategorylist = subcattest.Where(x => x.IsLeaf == true).ToList();
-                        }
-                    }
-                }
-                else
-                {
-                    if (IsTopContent)
-                    {
-                        List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
-                        if (subcattest != null && subcattest.Count > 0)
-                        {
-                            objSubcategorylist = subcattest.Where(x => x.Depth == ((int)CategorySliderCategory.Depth + 1)).ToList();
-                            if (objSubcategorylist.Count > 0)
-                            {
-                                objSubcategorylist = objSubcategorylist.Take(10).ToList();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
-                        if (subcattest != null && subcattest.Count > 0)
-                        {
-                            objSubcategorylist = subcattest.Where(x => x.Depth == ((int)CategorySliderCategory.Depth + 1)).ToList();
-                        }
-                    }
-                }
-                if (objSubcategorylist != null && objSubcategorylist.Count > 0)
-                {
-                    foreach (var catitem in objSubcategorylist)
-                    {
-                        string CategoryID = null;
-                        //string CategoryName = string.Empty;
-                        string CategoryImgPath = string.Empty;
-                        var objCategory = await _db.Categories.Where(x => x.Id == (int)catitem.ID).FirstOrDefaultAsync();
-                        if (objCategory != null)
-                        {
-                            bool IsVisiableCategory = false;
-                            List<select_SubCategoriesByCategoryID> objSubcategorylistofSubCategory = null;
-                            List<ProductVariation> objsubcategoryallvariants = new List<ProductVariation>();
-                            if (!IncludeLeaf)
-                            {
-                                objSubcategorylistofSubCategory = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
-                                if (objSubcategorylistofSubCategory.Count() > 0)
-                                {
-                                    IsVisiableCategory = true;
-                                }
-                                else
-                                {
-                                    if (catitem.ProductCount == 0)
-                                    {
-                                        IsVisiableCategory = false;
-                                    }
-                                    else
-                                    {
-                                        IsVisiableCategory = true;
-                                    }
-                                }
-                                if (string.IsNullOrEmpty(catitem.ImagePath))
-                                {
-                                    if (IsVisiableCategory)
-                                    {
-                                        List<ProductVariation> objTempSubCatvariant = bc.GetTop4PoplarProductVariant(objCategory.Id, null);
-                                        if (objTempSubCatvariant != null && objTempSubCatvariant.Count > 0)
-                                        {
-                                            foreach (ProductVariation item in objTempSubCatvariant)
-                                            {
-                                                objsubcategoryallvariants.Add(item);
-                                            }
-                                        }
+        //        List<select_SubCategoriesByCategoryID> objSubcategorylist = null;
+        //        if (IncludeLeaf)
+        //        {
+        //            if (IsTopContent)
+        //            {
+        //                List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
+        //                if (subcattest != null && subcattest.Count > 0)
+        //                {
+        //                    objSubcategorylist = subcattest.Where(x => x.IsLeaf == true).Take(10).ToList();
+        //                }
+        //            }
+        //            else
+        //            {
+        //                List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
+        //                if (subcattest != null && subcattest.Count > 0)
+        //                {
+        //                    objSubcategorylist = subcattest.Where(x => x.IsLeaf == true).ToList();
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (IsTopContent)
+        //            {
+        //                List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
+        //                if (subcattest != null && subcattest.Count > 0)
+        //                {
+        //                    objSubcategorylist = subcattest.Where(x => x.Depth == ((int)CategorySliderCategory.Depth + 1)).ToList();
+        //                    if (objSubcategorylist.Count > 0)
+        //                    {
+        //                        objSubcategorylist = objSubcategorylist.Take(10).ToList();
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                List<select_SubCategoriesByCategoryID> subcattest = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
+        //                if (subcattest != null && subcattest.Count > 0)
+        //                {
+        //                    objSubcategorylist = subcattest.Where(x => x.Depth == ((int)CategorySliderCategory.Depth + 1)).ToList();
+        //                }
+        //            }
+        //        }
+        //        if (objSubcategorylist != null && objSubcategorylist.Count > 0)
+        //        {
+        //            foreach (var catitem in objSubcategorylist)
+        //            {
+        //                string CategoryID = null;
+        //                //string CategoryName = string.Empty;
+        //                string CategoryImgPath = string.Empty;
+        //                var objCategory = await _db.Categories.Where(x => x.Id == (int)catitem.ID).FirstOrDefaultAsync();
+        //                if (objCategory != null)
+        //                {
+        //                    bool IsVisiableCategory = false;
+        //                    List<select_SubCategoriesByCategoryID> objSubcategorylistofSubCategory = null;
+        //                    List<ProductVariation> objsubcategoryallvariants = new List<ProductVariation>();
+        //                    if (!IncludeLeaf)
+        //                    {
+        //                        objSubcategorylistofSubCategory = await _productRepository.GetSubCategoriesByCategoryID(CategorySliderCategory.Id);
+        //                        if (objSubcategorylistofSubCategory.Count() > 0)
+        //                        {
+        //                            IsVisiableCategory = true;
+        //                        }
+        //                        else
+        //                        {
+        //                            if (catitem.ProductCount == 0)
+        //                            {
+        //                                IsVisiableCategory = false;
+        //                            }
+        //                            else
+        //                            {
+        //                                IsVisiableCategory = true;
+        //                            }
+        //                        }
+        //                        if (string.IsNullOrEmpty(catitem.ImagePath))
+        //                        {
+        //                            if (IsVisiableCategory)
+        //                            {
+        //                                List<ProductVariation> objTempSubCatvariant = bc.GetTop4PoplarProductVariant(objCategory.Id, null);
+        //                                if (objTempSubCatvariant != null && objTempSubCatvariant.Count > 0)
+        //                                {
+        //                                    foreach (ProductVariation item in objTempSubCatvariant)
+        //                                    {
+        //                                        objsubcategoryallvariants.Add(item);
+        //                                    }
+        //                                }
 
-                                        foreach (select_SubCategoriesByCategoryID Subcategoryofsubcategory in objSubcategorylistofSubCategory)
-                                        {
+        //                                foreach (select_SubCategoriesByCategoryID Subcategoryofsubcategory in objSubcategorylistofSubCategory)
+        //                                {
                                             
-                                            objTempSubCatvariant = bc.GetTop4PoplarProductVariant((int)Subcategoryofsubcategory.ID, null);
-                                            if (objTempSubCatvariant != null && objTempSubCatvariant.Count > 0)
-                                            {
-                                                foreach (ProductVariation item in objTempSubCatvariant)
-                                                {
-                                                    objsubcategoryallvariants.Add(item);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                if (catitem.ProductCount == 0)
-                                {
-                                    IsVisiableCategory = false;
-                                }
-                                else
-                                {
-                                    IsVisiableCategory = true;
-                                    List<ProductVariation> objTempSubCatvariant = bc.GetTop4PoplarProductVariant(objCategory.Id, null);
-                                    if (objTempSubCatvariant != null && objTempSubCatvariant.Count > 0)
-                                    {
-                                        foreach (ProductVariation item in objTempSubCatvariant)
-                                        {
-                                            objsubcategoryallvariants.Add(item);
-                                        }
-                                    }
-                                }
-                            }
+        //                                    objTempSubCatvariant = bc.GetTop4PoplarProductVariant((int)Subcategoryofsubcategory.ID, null);
+        //                                    if (objTempSubCatvariant != null && objTempSubCatvariant.Count > 0)
+        //                                    {
+        //                                        foreach (ProductVariation item in objTempSubCatvariant)
+        //                                        {
+        //                                            objsubcategoryallvariants.Add(item);
+        //                                        }
+        //                                    }
+        //                                }
+        //                            }
+        //                        }
+        //                    }
+        //                    else
+        //                    {
+        //                        if (catitem.ProductCount == 0)
+        //                        {
+        //                            IsVisiableCategory = false;
+        //                        }
+        //                        else
+        //                        {
+        //                            IsVisiableCategory = true;
+        //                            List<ProductVariation> objTempSubCatvariant = bc.GetTop4PoplarProductVariant(objCategory.Id, null);
+        //                            if (objTempSubCatvariant != null && objTempSubCatvariant.Count > 0)
+        //                            {
+        //                                foreach (ProductVariation item in objTempSubCatvariant)
+        //                                {
+        //                                    objsubcategoryallvariants.Add(item);
+        //                                }
+        //                            }
+        //                        }
+        //                    }
 
-                            if (IsVisiableCategory)
-                            {
-                                CategoryName = objCategory.CategoryName.ToString().Trim();
-                                //CategoryID = AE.Encrypt(objCategory.ID.ToString());
+        //                    if (IsVisiableCategory)
+        //                    {
+        //                        CategoryName = objCategory.CategoryName.ToString().Trim();
+        //                        //CategoryID = AE.Encrypt(objCategory.ID.ToString());
 
-                                if (objCategory.CategoryImages.Count > 0)
-                                {
-                                    // Assuming you are in a Controller or Razor Page
-                                    // You can use dependency injection to access the HttpContext
+        //                        if (objCategory.CategoryImages.Count > 0)
+        //                        {
+        //                            // Assuming you are in a Controller or Razor Page
+        //                            // You can use dependency injection to access the HttpContext
 
-                                    CategoryImage objCategoryImage = objCategory.CategoryImages.FirstOrDefault(x => x.ImageOrderNo == 0);
+        //                            CategoryImage objCategoryImage = objCategory.CategoryImages.FirstOrDefault(x => x.ImageOrderNo == 0);
 
-                                    //if (objCategoryImage != null)
-                                    //{
-                                    //    // Accessing HttpContext in ASP.NET Core
-                                    //    string subdomain = $"{this.Request.Scheme}://{this.Request.Host}";
+        //                            //if (objCategoryImage != null)
+        //                            //{
+        //                            //    // Accessing HttpContext in ASP.NET Core
+        //                            //    string subdomain = $"{this.Request.Scheme}://{this.Request.Host}";
 
-                                    //    // Note: The "~" in ASP.NET Core is not used for path resolution, so you may need to adjust the path accordingly
-                                    //    CategoryImgPath = $"{subdomain}/{objCategoryImage.Image.ImagePath.Replace("~", "")}";
+        //                            //    // Note: The "~" in ASP.NET Core is not used for path resolution, so you may need to adjust the path accordingly
+        //                            //    CategoryImgPath = $"{subdomain}/{objCategoryImage.Image.ImagePath.Replace("~", "")}";
 
-                                    //    // Using IHostingEnvironment to map the path in ASP.NET Core
-                                    //    string filePath = this.HostingEnvironment.WebRootPath + CategoryImgPath;
+        //                            //    // Using IHostingEnvironment to map the path in ASP.NET Core
+        //                            //    string filePath = this.HostingEnvironment.WebRootPath + CategoryImgPath;
 
-                                    //    if (System.IO.File.Exists(filePath))
-                                    //    {
-                                    //        CategoryImgPath = "/img/NoImage.jpg";
-                                    //    }
-                                    //}
+        //                            //    if (System.IO.File.Exists(filePath))
+        //                            //    {
+        //                            //        CategoryImgPath = "/img/NoImage.jpg";
+        //                            //    }
+        //                            //}
 
-                                    //else
-                                    //{
-                                    //    foreach (CategoryImage objCategoryImageTemp in objCategory.CategoryImages)
-                                    //    {
-                                    //        if (objCategoryImageTemp != null)
-                                    //        {
-                                    //            CategoryImgPath = Subdomain + objCategoryImage.Image.ImagePath.Replace("~", "");
-                                    //            if (!File.Exists(HttpContext.Current.Server.MapPath(CategoryImgPath)))
-                                    //            {
-                                    //                CategoryImgPath = "/img/NoImage.jpg";
-                                    //            }
-                                    //            break;
-                                    //        }
-                                    //    }
-                                    //}
-                                }
-                                else
-                                {
-                                    CategoryImgPath = "/img/NoImage.jpg";
-                                }
-                            }
-                        }
-                        _objCategoryList.Add(new CategorySliderDTO()
-                        {
-                            CategoryID = CategoryID,
-                            CategoryName = CategoryName,
-                            CategoryImage = CategoryImgPath
-                        });
-                    }
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            return null;
-        }
+        //                            //else
+        //                            //{
+        //                            //    foreach (CategoryImage objCategoryImageTemp in objCategory.CategoryImages)
+        //                            //    {
+        //                            //        if (objCategoryImageTemp != null)
+        //                            //        {
+        //                            //            CategoryImgPath = Subdomain + objCategoryImage.Image.ImagePath.Replace("~", "");
+        //                            //            if (!File.Exists(HttpContext.Current.Server.MapPath(CategoryImgPath)))
+        //                            //            {
+        //                            //                CategoryImgPath = "/img/NoImage.jpg";
+        //                            //            }
+        //                            //            break;
+        //                            //        }
+        //                            //    }
+        //                            //}
+        //                        }
+        //                        else
+        //                        {
+        //                            CategoryImgPath = "/img/NoImage.jpg";
+        //                        }
+        //                    }
+        //                }
+        //                _objCategoryList.Add(new CategorySliderDTO()
+        //                {
+        //                    CategoryID = CategoryID,
+        //                    CategoryName = CategoryName,
+        //                    CategoryImage = CategoryImgPath
+        //                });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //    return null;
+        //}
 
     }
 }

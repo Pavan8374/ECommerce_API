@@ -15,7 +15,7 @@ namespace NatShopB2C.Domain.IServices
         Task<List<select_CategoryDetailsByFilter>> GetCategories(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve);
         Task<List<CategoryHierarchyDTO>> GetcategoryHierarchy(int? StartIndex, int? EndIndex, bool? IsActive, bool? IsArchieve, string? SearchString);
         Task<List<Category>> GetCategory(string? CategoryName, int? Id);
-        Task<List<CategorySliderDTO>> GetCategoriesSlider();
+        //Task<List<CategorySliderDTO>> GetCategoriesSlider();
 
     }
 }

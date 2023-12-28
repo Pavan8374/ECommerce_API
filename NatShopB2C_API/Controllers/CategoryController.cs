@@ -11,7 +11,7 @@ namespace NatShopB2C_API.Controllers
     [Authorize]
     [ApiController]
     [Route("/api/Category")]
-    public class CategoryController : Controller
+    public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
@@ -110,5 +110,33 @@ namespace NatShopB2C_API.Controllers
 
             }
         }
+        //[HttpGet]
+        //[Route("GetCategoriesSlider")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //public async Task<ActionResult<Response>> GetCategoriesSlider()
+        //{
+        //    {
+        //        try
+        //        {
+        //            var categories = await _categoryService.GetCategoriesSlider();
+        //            if (categories == null)
+        //            {
+        //                return NotFound();
+        //            }
+        //            //var list = categories;
+        //            response.Result = categories;
+        //            response.StatusCode = System.Net.HttpStatusCode.OK;
+        //            return Ok(response);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            response.IsSuccess = false;
+        //            response.ErrorMessages = new List<string>() { ex.ToString() };
+        //        }
+        //        return response;
+
+        //    }
+        //}
     }
 }

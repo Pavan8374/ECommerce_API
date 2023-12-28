@@ -160,13 +160,16 @@ namespace NatShopB2C.EF.Data
         public virtual DbSet<Warehouse> Warehouses { get; set; } = null!;
 
 
-
+        //FOR CONSUMING STORED PROCEDURES
         public DbSet<ProductByAllFilterOptions> ProductByAllFilterOptions { get; set; }
         public DbSet<select_SubCategoriesByCategoryID> usp_select_SubCategoriesByCategoryID { get; set; }
         public DbSet<select_ProductsDetailsByFilter> select_ProductsDetailsByFilter { get; set; }
         public DbSet<select_CategoryDetailsByFilter> select_CategoryDetailsByFilter { get; set; }
         public DbSet<search_CategoryDetailsTree> search_CategoryDetailsTree { get; set; }
         public DbSet<search_ProductPopup> search_ProductPopup { get; set; }
+        public DbSet<select_Slider_NewProduct> select_Slider_NewProduct { get; set; }
+        public DbSet<select_Slider_UpCommingProduct> select_Slider_UpCommingProduct { get; set; }
+        public DbSet<select_Slider_PopularProduct> select_Slider_PopularProduct { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -4595,7 +4598,7 @@ namespace NatShopB2C.EF.Data
                 entity.Property(e => e.WarehouseName).HasMaxLength(200);
             });
 
-
+            //FOR CONSUMING STORED PROCEDURES
 
             modelBuilder.Entity<ProductByAllFilterOptions>().HasNoKey().ToView(null);
             modelBuilder.Entity<select_SubCategoriesByCategoryID>().HasNoKey().ToView(null);
@@ -4603,6 +4606,9 @@ namespace NatShopB2C.EF.Data
             modelBuilder.Entity<select_CategoryDetailsByFilter>().HasNoKey().ToView(null);
             modelBuilder.Entity<search_CategoryDetailsTree>().HasNoKey().ToView(null);
             modelBuilder.Entity<search_ProductPopup>().HasNoKey().ToView(null);
+            modelBuilder.Entity<select_Slider_NewProduct>().HasNoKey().ToView(null);
+            modelBuilder.Entity<select_Slider_UpCommingProduct>().HasNoKey().ToView(null);
+            modelBuilder.Entity<select_Slider_PopularProduct>().HasNoKey().ToView(null);
 
             OnModelCreatingPartial(modelBuilder);
 
